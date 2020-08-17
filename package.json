@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build:ui": "rm -rf build && cd ../fullstackopen-2020/part2/phonebook && npm run build --prod && cp -r build ../../../fullstackopen-2020-part3/",
     "start": "node index.js",
     "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
