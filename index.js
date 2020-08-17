@@ -26,10 +26,28 @@ let persons = [
   },
 ];
 
+const generateId = () => {
+  return Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
+};
+
 app.get("/info", (req, res) => {
   res.send(`<p>Phonebook has info for ${persons.length} people</p>
   <p>${Date().toString()}</p>
   `);
+});
+
+app.post("/api/persons", (request, response) => {
+  const body = request.body;
+
+  const person = {
+    name: body.name,
+    number: body.number,
+    id: generateId(),
+  };
+
+  persons = persons.concat(person);
+
+  response.json(person);
 });
 
 app.get("/api/persons", (req, res) => {
