@@ -11,6 +11,6 @@
 - [x] 3.9 phonebook backend step9
 - [x] 3.10 phonebook backend step10
 - [x] 3.11 phonebook backend step11
+- [x] 3.12 Command-line database
 
 [Link to phonebook app](https://glacial-meadow-91363.herokuapp.com/)
-
