@@ -9,7 +9,6 @@ if (process.argv.length < 3) {
 const password = process.argv[2];
 
 const url = `mongodb+srv://fullstackopen-gj:${password}@cluster0.hvjjg.mongodb.net/fullstackopen?retryWrites=true&w=majority`;
-//mongodb+srv://fullstackopen-gj:<password>@cluster0.hvjjg.mongodb.net/<dbname>?retryWrites=true&w=majority
 
 mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true });
 
