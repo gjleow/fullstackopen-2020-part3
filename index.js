@@ -46,43 +46,55 @@ app.get("/info", (req, res) => {
 });
 
 app.post("/api/persons", (req, res) => {
-  const body = req.body;
-
-  if (!body.name) {
+  const { name, number } = req.body;
+  if (!name) {
     return res.status(400).json({
       error: "name missing",
     });
   }
 
-  if (!body.number) {
+  if (!number) {
     return res.status(400).json({
       error: "number missing",
     });
   }
 
   const person = new Person({
-    name: body.name,
-    number: body.number,
+    name: name,
+    number: number,
   });
 
-  person.save().then((savedPerson) => {
-    res.json(savedPerson.toJSON());
-  });
+  person
+    .save()
+    .then((savedPerson) => {
+      res.json(savedPerson.toJSON());
+    })
+    .catch((err) => {
+      next(err);
+    });
 });
 
 app.get("/api/persons", (req, res) => {
-  Person.find({}).then((persons) => {
-    res.json(persons.map((person) => person.toJSON()));
-  });
-});
-
-app.get("/api/persons/:id", (req, res) => {
-  Person.findById(req.params.id)
-    .then((person) => {
-      res.json(person.toJSON());
+  Person.find({})
+    .then((persons) => {
+      res.json(persons.map((person) => person.toJSON()));
     })
     .catch((err) => {
-      res.status(404).end();
+      next(err);
+    });
+});
+
+app.get("/api/persons/:id", (req, res, next) => {
+  Person.findById(req.params.id)
+    .then((person) => {
+      if (person) {
+        res.json(person.toJSON());
+      } else {
+        res.status(404).end();
+      }
+    })
+    .catch((err) => {
+      next(err);
     });
 });
 
@@ -92,9 +104,24 @@ app.delete("/api/persons/:id", (req, res) => {
       res.status(204).end();
     })
     .catch((err) => {
-      res.status(500).end();
+      next(err);
     });
 });
+
+const unknownEndpoint = (error, req, res, next) => {
+  res.status(404).send({ error: "unknown endpoint" });
+};
+
+app.use(unknownEndpoint);
+
+const errorHandler = (error, req, res, next) => {
+  if (error.name === "CastError" && error.kind == "ObjectId") {
+    return res.status(400).send({ error: "malformatted id" });
+  }
+  next(error);
+};
+
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
