@@ -14,5 +14,9 @@
 - [x] 3.12 Command-line database
 - [x] 3.13 phonebook database, step 1
 - [x] 3.14 phonebook database, step 2
+- [x] 3.15 phonebook database, step 3
+- [ ] 3.16 phonebook database, step 4
+- [ ] 3.17 phonebook database, step 5
+- [ ] 3.18 phonebook database, step 6
 
 [Link to phonebook app](https://glacial-meadow-91363.herokuapp.com/)
