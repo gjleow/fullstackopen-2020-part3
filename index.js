@@ -1,22 +1,20 @@
-require("dotenv").config();
-const express = require("express");
-const morgan = require("morgan");
+require('dotenv').config();
+const express = require('express');
+const morgan = require('morgan');
+
 const app = express();
-const Person = require("./models/person");
-const { response } = require("express");
+const Person = require('./models/person');
 
 app.use(express.json());
-morgan.token("res-body", function (req, res) {
-  return JSON.stringify(req.body);
-});
+morgan.token('res-body', (req) => JSON.stringify(req.body));
 app.use(
   morgan(
-    ":method :url :status :res[content-length] - :response-time ms :res-body"
-  )
+    ':method :url :status :res[content-length] - :response-time ms :res-body',
+  ),
 );
-app.use(express.static("build"));
+app.use(express.static('build'));
 
-app.get("/info", (req, res, next) => {
+app.get('/info', (req, res, next) => {
   Person.count({})
     .then((count) => {
       res.send(`<p>Phonebook has info for ${count} people</p>
@@ -28,26 +26,26 @@ app.get("/info", (req, res, next) => {
     });
 });
 
-app.post("/api/persons", (req, res, next) => {
+app.post('/api/persons', (req, res, next) => {
   const { name, number } = req.body;
   if (!name) {
     return res.status(400).json({
-      error: "name missing",
+      error: 'name missing',
     });
   }
 
   if (!number) {
     return res.status(400).json({
-      error: "number missing",
+      error: 'number missing',
     });
   }
 
   const person = new Person({
-    name: name,
-    number: number,
+    name,
+    number,
   });
 
-  person
+  return person
     .save()
     .then((savedPerson) => {
       res.json(savedPerson.toJSON());
@@ -57,7 +55,7 @@ app.post("/api/persons", (req, res, next) => {
     });
 });
 
-app.get("/api/persons", (req, res, next) => {
+app.get('/api/persons', (req, res, next) => {
   Person.find({})
     .then((persons) => {
       res.json(persons.map((person) => person.toJSON()));
@@ -67,7 +65,7 @@ app.get("/api/persons", (req, res, next) => {
     });
 });
 
-app.get("/api/persons/:id", (req, res, next) => {
+app.get('/api/persons/:id', (req, res, next) => {
   Person.findById(req.params.id)
     .then((person) => {
       if (person) {
@@ -81,11 +79,11 @@ app.get("/api/persons/:id", (req, res, next) => {
     });
 });
 
-app.put("/api/persons/:id", (req, res, next) => {
+app.put('/api/persons/:id', (req, res, next) => {
   const { name, number } = req.body;
   const person = {
-    name: name,
-    number: number,
+    name,
+    number,
   };
   Person.findByIdAndUpdate(req.params.id, person, {
     new: true,
@@ -99,9 +97,9 @@ app.put("/api/persons/:id", (req, res, next) => {
     });
 });
 
-app.delete("/api/persons/:id", (req, res, next) => {
+app.delete('/api/persons/:id', (req, res, next) => {
   Person.findByIdAndRemove(req.params.id)
-    .then((result) => {
+    .then(() => {
       res.status(204).end();
     })
     .catch((err) => {
@@ -110,18 +108,19 @@ app.delete("/api/persons/:id", (req, res, next) => {
 });
 
 const errorHandler = (error, req, res, next) => {
-  if (error.name === "CastError" && error.kind == "ObjectId") {
-    return res.status(400).send({ error: "malformatted id" });
-  } else if (error.name === "ValidationError") {
+  if (error.name === 'CastError' && error.kind === 'ObjectId') {
+    return res.status(400).send({ error: 'malformatted id' });
+  }
+  if (error.name === 'ValidationError') {
     return res.status(400).json({ error: error.message });
   }
-  next(error);
+  return next(error);
 };
 
 app.use(errorHandler);
 
-const unknownEndpoint = (error, req, res, next) => {
-  res.status(404).send({ error: "unknown endpoint" });
+const unknownEndpoint = (error, req, res) => {
+  res.status(404).send({ error: 'unknown endpoint' });
 };
 
 app.use(unknownEndpoint);

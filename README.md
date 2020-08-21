@@ -21,5 +21,6 @@
 - [x] 3.19 phonebook database, step 7
 - [x] 3.20 phonebook database, step 8
 - [x] 3.21 phonebook database, step 9
+- [x] 3.22 lint configuration, step 1
 
 [Link to phonebook app](https://glacial-meadow-91363.herokuapp.com/)
