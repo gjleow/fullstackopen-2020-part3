@@ -87,12 +87,16 @@ app.put("/api/persons/:id", (req, res, next) => {
     name: name,
     number: number,
   };
-
-  Person.findByIdAndUpdate(req.params.id, person, { new: true })
+  Person.findByIdAndUpdate(req.params.id, person, {
+    new: true,
+    runValidators: true,
+  })
     .then((updatedPerson) => {
       res.json(updatedPerson.toJSON());
     })
-    .catch((error) => next(error));
+    .catch((error) => {
+      next(error);
+    });
 });
 
 app.delete("/api/persons/:id", (req, res, next) => {
@@ -105,20 +109,22 @@ app.delete("/api/persons/:id", (req, res, next) => {
     });
 });
 
-const unknownEndpoint = (error, req, res, next) => {
-  res.status(404).send({ error: "unknown endpoint" });
-};
-
-app.use(unknownEndpoint);
-
 const errorHandler = (error, req, res, next) => {
   if (error.name === "CastError" && error.kind == "ObjectId") {
     return res.status(400).send({ error: "malformatted id" });
+  } else if (error.name === "ValidationError") {
+    return res.status(400).json({ error: error.message });
   }
   next(error);
 };
 
 app.use(errorHandler);
+
+const unknownEndpoint = (error, req, res, next) => {
+  res.status(404).send({ error: "unknown endpoint" });
+};
+
+app.use(unknownEndpoint);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {

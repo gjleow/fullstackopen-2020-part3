@@ -18,5 +18,8 @@
 - [x] 3.16 phonebook database, step 4
 - [x] 3.17 phonebook database, step 5
 - [x] 3.18 phonebook database, step 6
+- [x] 3.19 phonebook database, step 7
+- [x] 3.20 phonebook database, step 8
+- [ ] 3.21 phonebook database, step 9
 
 [Link to phonebook app](https://glacial-meadow-91363.herokuapp.com/)
